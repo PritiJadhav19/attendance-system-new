@@ -10,7 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import Faculty from "./pages/Faculty";
 import Courses from "./pages/Courses";
-import Attendance from "./pages/Attendance";
+import Attendance from "./pages/Attendance"; // ✅ Attendance page
+import AttendanceMarking from "./pages/AttendanceMarking"; // ✅ AttendanceMarking page
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
@@ -23,31 +24,27 @@ import Classes from "./pages/Classes";
 import MySubjects from "./pages/MySubjects";
 import MyMentees from "./pages/MyMentees";
 import Timetable from "./pages/Timetable";
-import AttendanceMarking from "./pages/AttendanceMarking";
 import MyTransfers from "./pages/MyTransfers";
-import AttendanceDashboard from "./pages/AttendanceDashboard";
 
 const queryClient = new QueryClient();
 
-// Protected route component with role check
-const ProtectedRoute = ({ 
-  children, 
-  requiredRole 
-}: { 
+const ProtectedRoute = ({
+  children,
+  requiredRole,
+}: {
   children: React.ReactNode;
   requiredRole?: "hod" | "faculty" | null;
 }) => {
   const { user, isHOD } = useUser();
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
-  // If a specific role is required
+
   if (requiredRole === "hod" && !isHOD()) {
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -71,48 +68,58 @@ const AppRoutes = () => {
       >
         <Route path="/" element={<Dashboard />} />
 
-        {/* New Attendance Dashboard (main menu) */}
-        <Route path="/attendance" element={<AttendanceDashboard />} />
+        {/* ✅ Both attendance routes */}
+        <Route path="/attendance" element={<Attendance />} />
+        <Route path="/attendance-marking" element={<AttendanceMarking />} />
 
         {/* HOD-only routes */}
-        <Route path="/students" element={
-          <ProtectedRoute requiredRole="hod">
-            <Students />
-          </ProtectedRoute>
-        } />
-        <Route path="/faculty" element={
-          <ProtectedRoute requiredRole="hod">
-            <Faculty />
-          </ProtectedRoute>
-        } />
-        <Route path="/classes" element={
-          <ProtectedRoute requiredRole="hod">
-            <Classes />
-          </ProtectedRoute>
-        } />
-        <Route path="/reports" element={
-          <ProtectedRoute requiredRole="hod">
-            <Reports />
-          </ProtectedRoute>
-        } />
-        
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute requiredRole="hod">
+              <Students />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faculty"
+          element={
+            <ProtectedRoute requiredRole="hod">
+              <Faculty />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classes"
+          element={
+            <ProtectedRoute requiredRole="hod">
+              <Classes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute requiredRole="hod">
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Faculty-specific routes */}
         <Route path="/my-classes" element={<MyClasses />} />
         <Route path="/my-reports" element={<MyReports />} />
         <Route path="/my-subjects" element={<MySubjects />} />
         <Route path="/my-mentees" element={<MyMentees />} />
-        
+
         {/* Common routes */}
         <Route path="/courses" element={<Courses />} />
-        <Route path="/attendance-marking" element={<AttendanceMarking />} />
         <Route path="/timetable" element={<Timetable />} />
         <Route path="/settings" element={<Settings />} />
-        
-        {/* My Transfers route */}
         <Route path="/my-transfers" element={<MyTransfers />} />
       </Route>
 
-      {/* 404 route */}
+      {/* 404 fallback */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
